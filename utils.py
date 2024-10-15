@@ -1,22 +1,19 @@
+import datetime
 import requests
 from fake_useragent import UserAgent
-import datetime
 
 ua = UserAgent()
+session = requests.Session()
 
 
-def get_todo_list(cookies, subject_id, year):
+def get_lectures(cookies, subject_id, year):
     lectures_url = "https://klas.kw.ac.kr/std/lis/evltn/SelectOnlineCntntsStdList.do"
-    homeworks_url = "https://klas.kw.ac.kr/std/lis/evltn/TaskStdList.do"
-    team_projects_url = "https://klas.kw.ac.kr/std/lis/evltn/PrjctStdList.do"
 
     requests_body = {
         "selectSubj": subject_id,
         "selectYearhakgi": year,
         "selectChangeYn": "Y",
     }
-
-    session = requests.Session()
 
     headers = {
         "Content-Type": "application/json",
@@ -28,8 +25,6 @@ def get_todo_list(cookies, subject_id, year):
     )
 
     lecture_count = 0
-    homework_count = 0
-    team_project_count = 0
 
     if response.status_code == 200:
         data = response.json()
@@ -38,9 +33,28 @@ def get_todo_list(cookies, subject_id, year):
                 if task.get("prog") < 100:
                     lecture_count += 1
 
+    return lecture_count
+
+
+def get_homeworks(cookies, subject_id, year):
+    homeworks_url = "https://klas.kw.ac.kr/std/lis/evltn/TaskStdList.do"
+
+    requests_body = {
+        "selectSubj": subject_id,
+        "selectYearhakgi": year,
+        "selectChangeYn": "Y",
+    }
+
+    headers = {
+        "Content-Type": "application/json",
+        "User-Agent": ua.random,
+    }
+
     response = session.post(
         url=homeworks_url, json=requests_body, headers=headers, cookies=cookies
     )
+
+    homework_count = 0
 
     if response.status_code == 200:
         data = response.json()
@@ -57,15 +71,70 @@ def get_todo_list(cookies, subject_id, year):
                     left_time = expire_date_time - now_time
                     print(f"{left_time.days} days left: {task.get('title')}", end=" ")
 
+    return homework_count
+
+
+def get_team_projects(cookies, subject_id, year):
+    team_projects_url = "https://klas.kw.ac.kr/std/lis/evltn/PrjctStdList.do"
+
+    requests_body = {
+        "selectSubj": subject_id,
+        "selectYearhakgi": year,
+        "selectChangeYn": "Y",
+    }
+
+    headers = {
+        "Content-Type": "application/json",
+        "User-Agent": ua.random,
+    }
+
     response = session.post(
         url=team_projects_url, json=requests_body, headers=headers, cookies=cookies
     )
+
+    team_project_count = 0
 
     if response.status_code == 200:
         data = response.json()
         for task in data:
             if task.get("submityn") == "N":
                 team_project_count += 1
+
+    return team_project_count
+
+
+def get_quiz(cookies, subject_id, year):
+    team_projects_url = "https://klas.kw.ac.kr/std/lis/evltn/PrjctStdList.do"
+
+    requests_body = {
+        "selectSubj": subject_id,
+        "selectYearhakgi": year,
+        "selectChangeYn": "Y",
+    }
+
+    headers = {
+        "Content-Type": "application/json",
+        "User-Agent": ua.random,
+    }
+
+    response = session.post(
+        url=team_projects_url, json=requests_body, headers=headers, cookies=cookies
+    )
+
+    team_project_count = 0
+
+    if response.status_code == 200:
+        data = response.json()
+        for task in data:
+            if task.get("submityn") == "N":
+                team_project_count += 1
+
+    return team_project_count
+
+def get_todo_list(cookies, subject_id, year):
+    lecture_count = get_lectures(cookies, subject_id, year)
+    homework_count = get_homeworks(cookies, subject_id, year)
+    team_project_count = get_team_projects(cookies, subject_id, year)
 
     if lecture_count != 0:
         print("Lectures: ", lecture_count)

@@ -7,37 +7,31 @@ from fake_useragent import UserAgent
 ua = UserAgent()
 
 
-def get_subjects(login_cookies):
-    # Define the URL for the API request
+def get_subjects(login_cookies: dict) -> dict:
     url = "https://klas.kw.ac.kr/std/cmn/frame/YearhakgiAtnlcSbjectList.do"
 
-    # Create a session to manage cookies or authentication if needed
     session = requests.Session()
 
-    # Prepare headers, if necessary (e.g., User-Agent, Authorization, etc.)
     headers = {
         "Content-Type": "application/json",
         "User-Agent": ua.random,
     }
 
-    # Send the POST request
     response = session.post(url, headers=headers, cookies=login_cookies, json={})
 
-    # Check if the request was successful
     if response.status_code == 200:
         logging.debug(
             f"Data retrieved successfully. Status code: {response.status_code}"
         )
         data = response.json()
         logging.info(json.dumps(data, indent=4, ensure_ascii=False))
-        return data[0]
+        return data[0]  # Return the last semester data, remove 0 if you want all
 
     else:
         logging.error(f"Failed to retrieve data. Status code: {response.status_code}")
 
 
-def get_subject_info(login_cookies, data, subject_index):
-    # Define the URL for the API request
+def get_subject_info(login_cookies: dict, data: dict, subject_index: int) -> dict:
     url = "https://klas.kw.ac.kr/std/lis/evltn/LctrumHomeStdInfo.do"
 
     session = requests.Session()
@@ -108,3 +102,8 @@ def print_lecture_info(lecture_info):
     print(f"{f'Quiz: {done_quiz_count}/{quiz_count}':^80}")
     print(f"{f'Homework: {done_task_count}/{task_count}':^80}")
     print(f"{f'Team Project: {done_project_count}/{project_count}':^80}")
+
+
+def update_lecture_progress(lecture_info: dict) -> None:
+    url = "https://klas.kw.ac.kr/spv/lis/lctre/viewer/UpdateProgress.do"
+    pass
