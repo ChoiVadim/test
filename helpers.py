@@ -25,7 +25,9 @@ def get_subjects(login_cookies):
 
     # Check if the request was successful
     if response.status_code == 200:
-        # Parse the response content as JSON
+        logging.debug(
+            f"Data retrieved successfully. Status code: {response.status_code}"
+        )
         data = response.json()
         logging.info(json.dumps(data, indent=4, ensure_ascii=False))
         return data[0]
@@ -102,7 +104,7 @@ def print_lecture_info(lecture_info):
     new_project_count = lecture_info.get("prjctNewCnt")
     done_project_count = lecture_info.get("prjctPrsntCnt")
 
-    print(f"Lecture: {viewed_lectures_count}/{lectures_count}")
-    print(f"Quiz: {done_quiz_count}/{quiz_count}")
-    print(f"Homework: {done_task_count}/{task_count}")
-    print(f"Team Project: {done_project_count}/{project_count}")
+    print(f"{f'Lecture: {viewed_lectures_count}/{lectures_count}':^80}")
+    print(f"{f'Quiz: {done_quiz_count}/{quiz_count}':^80}")
+    print(f"{f'Homework: {done_task_count}/{task_count}':^80}")
+    print(f"{f'Team Project: {done_project_count}/{project_count}':^80}")

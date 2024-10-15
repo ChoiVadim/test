@@ -55,7 +55,7 @@ def get_todo_list(cookies, subject_id, year):
                     )
                     now_time = datetime.datetime.now()
                     left_time = expire_date_time - now_time
-                    print(f"{left_time.days} days left: {task.get('title')}")
+                    print(f"{left_time.days} days left: {task.get('title')}", end=" ")
 
     response = session.post(
         url=team_projects_url, json=requests_body, headers=headers, cookies=cookies
