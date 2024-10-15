@@ -58,7 +58,7 @@ def login(username, raw_password) -> dict | None:
     for cookie in cookies:
         login_cookies[cookie["name"]] = cookie["value"]
 
-    with open("cookies.json", "w") as f:
+    with open(f"{username}_cookies.json", "w") as f:
         json.dump(login_cookies, f)
 
     logging.info("Cookies saved to cookies.json")

@@ -6,7 +6,7 @@ ua = UserAgent()
 session = requests.Session()
 
 
-def get_lectures(cookies, subject_id, year):
+def get_lectures(cookies: dict, subject_id: str, year: str) -> dict | None:
     lectures_url = "https://klas.kw.ac.kr/std/lis/evltn/SelectOnlineCntntsStdList.do"
 
     requests_body = {
@@ -24,19 +24,13 @@ def get_lectures(cookies, subject_id, year):
         url=lectures_url, json=requests_body, headers=headers, cookies=cookies
     )
 
-    lecture_count = 0
-
     if response.status_code == 200:
-        data = response.json()
-        for task in data:
-            if task.get("prog") is not None:
-                if task.get("prog") < 100:
-                    lecture_count += 1
+        return response.json()
 
-    return lecture_count
+    return None
 
 
-def get_homeworks(cookies, subject_id, year):
+def get_homeworks(cookies: dict, subject_id: str, year: str) -> dict | None:
     homeworks_url = "https://klas.kw.ac.kr/std/lis/evltn/TaskStdList.do"
 
     requests_body = {
@@ -54,27 +48,13 @@ def get_homeworks(cookies, subject_id, year):
         url=homeworks_url, json=requests_body, headers=headers, cookies=cookies
     )
 
-    homework_count = 0
-
     if response.status_code == 200:
-        data = response.json()
-        for task in data:
-            if task.get("indate") == "Y":
-                homework_count += 1
-                expire_date = task.get("expiredate")
+        return response.json()
 
-                if expire_date:
-                    expire_date_time = datetime.datetime.strptime(
-                        expire_date, "%Y-%m-%d %H:%M:%S"
-                    )
-                    now_time = datetime.datetime.now()
-                    left_time = expire_date_time - now_time
-                    print(f"{left_time.days} days left: {task.get('title')}", end=" ")
-
-    return homework_count
+    return None
 
 
-def get_team_projects(cookies, subject_id, year):
+def get_team_projects(cookies: dict, subject_id: str, year: str) -> dict | None:
     team_projects_url = "https://klas.kw.ac.kr/std/lis/evltn/PrjctStdList.do"
 
     requests_body = {
@@ -92,19 +72,14 @@ def get_team_projects(cookies, subject_id, year):
         url=team_projects_url, json=requests_body, headers=headers, cookies=cookies
     )
 
-    team_project_count = 0
-
     if response.status_code == 200:
-        data = response.json()
-        for task in data:
-            if task.get("submityn") == "N":
-                team_project_count += 1
+        return response.json()
 
-    return team_project_count
+    return None
 
 
-def get_quiz(cookies, subject_id, year):
-    team_projects_url = "https://klas.kw.ac.kr/std/lis/evltn/PrjctStdList.do"
+def get_quiz(cookies: dict, subject_id: str, year: str) -> dict | None:
+    quiz_url = "https://klas.kw.ac.kr/std/lis/evltn/AnytmQuizStdList.do"
 
     requests_body = {
         "selectSubj": subject_id,
@@ -118,27 +93,53 @@ def get_quiz(cookies, subject_id, year):
     }
 
     response = session.post(
-        url=team_projects_url, json=requests_body, headers=headers, cookies=cookies
+        url=quiz_url, json=requests_body, headers=headers, cookies=cookies
     )
 
-    team_project_count = 0
-
     if response.status_code == 200:
-        data = response.json()
-        for task in data:
-            if task.get("submityn") == "N":
-                team_project_count += 1
+        return response.json()
 
-    return team_project_count
+    return None
+
 
 def get_todo_list(cookies, subject_id, year):
-    lecture_count = get_lectures(cookies, subject_id, year)
-    homework_count = get_homeworks(cookies, subject_id, year)
-    team_project_count = get_team_projects(cookies, subject_id, year)
+    lectures = get_lectures(cookies, subject_id, year)
+    homeworks = get_homeworks(cookies, subject_id, year)
+    team_projects = get_team_projects(cookies, subject_id, year)
+    quiz = get_quiz(cookies, subject_id, year)
 
-    if lecture_count != 0:
-        print("Lectures: ", lecture_count)
-    if homework_count != 0:
-        print("Homeworks: ", homework_count)
-    if team_project_count != 0:
-        print("Team Projects: ", team_project_count)
+    not_done_lectures = []
+    for lecture in lectures:
+        if lecture.get("prog") is not None:
+            if lecture.get("prog") < 100:
+                not_done_lectures.append(lecture)
+
+    not_done_homeworks = []
+    for homework in homeworks:
+        if homework.get("indate") == "Y":
+            not_done_homeworks.append(homework)
+            # expire_date = homework.get("expiredate")
+
+            # if expire_date:
+            #     expire_date_time = datetime.datetime.strptime(
+            #         expire_date, "%Y-%m-%d %H:%M:%S"
+            #     )
+            #     now_time = datetime.datetime.now()
+            #     left_time = expire_date_time - now_time
+
+    not_done_team_projects = []
+    for team_project in team_projects:
+        if team_project.get("submityn") != "Y":
+            not_done_team_projects.append(team_project)
+
+    not_done_quizzes = []
+    for quiz in quiz:
+        if quiz.get("issubmit") != "Y":
+            not_done_quizzes.append(quiz)
+
+    return {
+        "lectures": not_done_lectures,
+        "homeworks": not_done_homeworks,
+        "team_projects": not_done_team_projects,
+        "quizzes": not_done_quizzes,
+    }

@@ -34,28 +34,37 @@ def main() -> None:
         logging.error("Failed to login")
         exit(1)
 
+    # Get a dict of all subjects
     subjects = get_subjects(login_cookies)
-    get_subject_info(login_cookies, subjects, 0)
 
-    # for index in range(len(data.get("subjList"))):
-    #     subject_name = data.get("subjList")[index].get("label")
-    #     lecture_info = get_subject_info(
-    #         login_cookies=login_cookies, data=data, subject_index=index
-    #     )
-    #     print(f"{subject_name:_^80}")
-    #     print_lecture_info(lecture_info)
-    #     print()
+    # Get more info about a specific subject
+    # subject = get_subject_info(login_cookies, subjects, 0)
 
-    #     year = data.get("value")
-    #     print(f"{f"You need to complete!"}")
-    #     print(f"{data.get("subjList")[index].get("name")}: ", end="")
+    how_many_subjects = len(subjects.get("subjList"))
+    subject_semester = subjects.get("value")
 
-    #     get_todo_list(
-    #         cookies=login_cookies,
-    #         subject_id=data.get("subjList")[index].get("value"),
-    #         year=year,
-    #     )
-    #     print("\n\n")
+    for index in range(how_many_subjects):
+        todo_list = get_todo_list(
+            cookies=login_cookies,
+            subject_id=subjects.get("subjList")[index].get("value"),
+            year=subject_semester,
+        )
+
+        print(subjects.get("subjList")[index].get("name"))
+
+        if todo_list["homeworks"]:
+            print(len(todo_list["homeworks"]))
+
+        if todo_list["lectures"]:
+            print(len(todo_list["lectures"]))
+
+        if todo_list["team_projects"]:
+            print(len(todo_list["team_projects"]))
+
+        if todo_list["quizzes"]:
+            print(len(todo_list["quizzes"]))
+
+        print("\n")
 
 
 if __name__ == "__main__":
