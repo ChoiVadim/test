@@ -2,4 +2,3 @@ requests
 fake-useragent
 selenium
 python-dotenv
-pycryptodome

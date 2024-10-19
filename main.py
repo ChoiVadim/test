@@ -3,20 +3,13 @@ import time
 import json
 import logging
 import getpass
-from pprint import pprint
 
-from dotenv import load_dotenv
-
-from login import login
-from utils import get_todo_list
-from helpers import get_subjects, get_subject_info
-
-
-load_dotenv()
+from src.login import login
+from src.utils import get_todo_list
+from src.helpers import get_subjects
 
 
 def main() -> None:
-    login_cookies = None
     username = input("Username: ")
     password = getpass.getpass("Password: ")
 
@@ -29,16 +22,17 @@ def main() -> None:
 
     except FileNotFoundError:
         login_cookies = login(username, password)
+        with open(f"{username}_cookies.json", "w") as f:
+            json.dump(login_cookies, f)
+
+    logging.info("Cookies saved to cookies.json")
+    logging.info(login_cookies)
 
     if login_cookies is None:
         logging.error("Failed to login")
         exit(1)
 
-    # Get a dict of all subjects
     subjects = get_subjects(login_cookies)
-
-    # Get more info about a specific subject
-    # subject = get_subject_info(login_cookies, subjects, 0)
 
     how_many_subjects = len(subjects.get("subjList"))
     subject_semester = subjects.get("value")
@@ -63,8 +57,6 @@ def main() -> None:
 
         if todo_list["quizzes"]:
             print(len(todo_list["quizzes"]))
-
-        print("\n")
 
 
 if __name__ == "__main__":
