@@ -45,18 +45,9 @@ def main() -> None:
         )
 
         print(subjects.get("subjList")[index].get("name"))
+        from pprint import pprint
 
-        if todo_list["homeworks"]:
-            print(len(todo_list["homeworks"]))
-
-        if todo_list["lectures"]:
-            print(len(todo_list["lectures"]))
-
-        if todo_list["team_projects"]:
-            print(len(todo_list["team_projects"]))
-
-        if todo_list["quizzes"]:
-            print(len(todo_list["quizzes"]))
+        pprint(todo_list)
 
 
 if __name__ == "__main__":
