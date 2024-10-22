@@ -12,10 +12,11 @@ from src.helpers import get_subjects
 def main() -> None:
     username = input("Username: ")
     password = getpass.getpass("Password: ")
-
     try:
         if time.time() - os.path.getmtime(f"{username}_cookies.json") > 3600:
             login_cookies = login(username, password)
+            with open(f"{username}_cookies.json", "w") as f:
+                json.dump(login_cookies, f)
 
         with open(f"{username}_cookies.json", "r") as f:
             login_cookies = json.load(f)
@@ -44,10 +45,29 @@ def main() -> None:
             year=subject_semester,
         )
 
-        print(subjects.get("subjList")[index].get("name"))
-        from pprint import pprint
+        for key, todo in todo_list.items():
+            if any(todo):
+                print(f"{subjects.get("subjList")[index].get("name"):_^80}")
 
-        pprint(todo_list)
+            if key == "homeworks" and todo:
+                print(
+                    f"You have {len(todo)} {key} to do. You have {todo[0].get('left_time').days} days left!"
+                )
+
+            if key == "lectures" and todo:
+                print(
+                    f"You have {len(todo)} {key} to do. You have {todo[0].get('left_time').days} days left!"
+                )
+
+            if key == "team_projects" and todo:
+                print(
+                    f"You have {len(todo)} {key} to do. You have {todo[0].get('left_time').days} days left!"
+                )
+
+            if key == "quizzes" and todo:
+                print(
+                    f"You have {len(todo)} {key} to do. You have {todo[0].get('left_time').days} days left!"
+                )
 
 
 if __name__ == "__main__":
@@ -59,3 +79,4 @@ if __name__ == "__main__":
     )
 
     main()
+

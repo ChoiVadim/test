@@ -62,24 +62,15 @@ def get_todo_list(cookies, subject_id, year):
     }
 
 
-def get_todo_list_left_time(cookies, subject_id, year):
-    lectures = get_lectures(cookies, subject_id, year)
-    homeworks = get_homeworks(cookies, subject_id, year)
-    team_projects = get_team_projects(cookies, subject_id, year)
-    quizzes = get_quiz(cookies, subject_id, year)
-
-    return {
-        "lectures": get_not_done_lectures_left_time(lectures),
-        "homeworks": get_not_done_homeworks_left_time(homeworks),
-        "team_projects": get_not_done_team_projects_left_time(team_projects),
-        "quizzes": get_not_done_quizzes_left_time(quizzes),
-    }
-
-
 def get_not_done_lectures_info(lectures):
     not_done_lectures = []
     for lecture in lectures:
-        if lecture.get("prog") is not None and lecture.get("prog") < 100:
+        if (
+            lecture.get("prog") is not None
+            and lecture.get("prog") < 100
+            and lecture.get("startDate")
+            < datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+        ):
             not_done_lectures.append(
                 {
                     "title": lecture.get("sbjt"),
@@ -91,16 +82,6 @@ def get_not_done_lectures_info(lectures):
                 }
             )
     return not_done_lectures
-
-
-def get_not_done_lectures_left_time(lectures):
-    return [
-        get_left_time(lecture.get("endDate"), "%Y-%m-%d %H:%M")
-        for lecture in lectures
-        if lecture.get("prog") is not None
-        and lecture.get("prog") < 100
-        and lecture.get("endDate")
-    ]
 
 
 def get_not_done_homeworks_info(homeworks):
@@ -119,14 +100,6 @@ def get_not_done_homeworks_info(homeworks):
     return not_done_homeworks
 
 
-def get_not_done_homeworks_left_time(homeworks):
-    return [
-        get_left_time(homework.get("expiredate"), "%Y-%m-%d %H:%M:%S")
-        for homework in homeworks
-        if homework.get("submityn") == "N" and homework.get("expiredate")
-    ]
-
-
 def get_not_done_team_projects_info(team_projects):
     not_done_team_projects = []
     for team_project in team_projects:
@@ -143,14 +116,6 @@ def get_not_done_team_projects_info(team_projects):
     return not_done_team_projects
 
 
-def get_not_done_team_projects_left_time(team_projects):
-    return [
-        get_left_time(team_project.get("expiredate"), "%Y-%m-%dT%H:%M:%S.%f%z", True)
-        for team_project in team_projects
-        if team_project.get("submityn") != "Y" and team_project.get("expiredate")
-    ]
-
-
 def get_not_done_quizzes_info(quizzes):
     not_done_quizzes = []
     for quiz in quizzes:
@@ -163,14 +128,6 @@ def get_not_done_quizzes_info(quizzes):
                 }
             )
     return not_done_quizzes
-
-
-def get_not_done_quizzes_left_time(quizzes):
-    return [
-        get_left_time(quiz.get("edt"), "%Y-%m-%d %H:%M")
-        for quiz in quizzes
-        if quiz.get("issubmit") == "N" and quiz.get("edt")
-    ]
 
 
 def get_left_time(expire_date, date_format, remove_timezone=False):
