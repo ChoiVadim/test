@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>KW Helper</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index.css') }}">
+    </head>
+    <body>
+        <div class="notification">
+            <div class="notiglow"></div>
+            <div class="notiborderglow"></div>
+            <div class="notititle">{{ student_info.get('name') }} {{ student_info.get('uid') }}</div>
+            <div class="notibody">
+                {{ student_info.get('major') }}<br>
+                <span>Credits: {{ student_info.get('credits').get('total') }}/{{ student_info.get('credits').get('required') }} {{ '%.2f' % student_info.get('credits').get('ratio') }}%</span><br>
+                <span>Major Credits: {{ student_info.get('major_credits').get('total') }}/{{ student_info.get('major_credits').get('required') }} {{ '%.2f' % student_info.get('major_credits').get('ratio') }}%</span><br>
+                Elective Credits: {{ student_info.get('elective_credits').get('total') }}/{{ student_info.get('elective_credits').get('required') }}<br>
+                Average Score: {{ student_info.get('average_score') }}<br>
+                Credits for left semesters: {{ student_info.get('credits_for_left_semesters') }}<br>
+                Major Credits for left semesters: {{ student_info.get('major_credits_for_left_semesters') }}<br>
+            </div>
+          </div>
+    </body> 
+</html>

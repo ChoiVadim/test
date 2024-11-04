@@ -1,0 +1,51 @@
+<!doctype html>
+<html style="margin:0;height:100%">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge" /> 
+	
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no" />
+	<meta name="apple-mobile-web-app-capable" content="yes"/>
+	<meta name="apple-touch-fullscreen" content="yes">
+	
+	<title>광운대학교 종합정보서비스</title>
+	<script src="https://report.kw.ac.kr:8585/ReportingServer/html5/js/jquery-1.11.0.min.js"></script>
+	<script src="https://report.kw.ac.kr:8585/ReportingServer/html5/js/crownix-viewer.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="https://report.kw.ac.kr:8585/ReportingServer/html5/css/crownix-viewer.min.css"/>
+</head>
+<body style="margin:0;height:100%">
+	<script>
+
+window.onload = function() {
+	var browser = navigator.userAgent.toLowerCase();
+     console.log(browser);
+	 if ( -1 == browser.indexOf('chrome')){
+		 if(true){
+	 		alert("크롬 브라우저 사용시 바로 인쇄가 가능합니다.");
+		 }
+	 }
+	var viewer = new m2soft.crownix.Viewer('https://report.kw.ac.kr:8585/ReportingServer/service', 'crownix-viewer');
+	viewer.hideToolbarItem(["print_pdf"]);	//Disable 할 툴바 항목의 인덱스 배열("pdf","doc","xls",ppt","hwp")
+	if('' == 'Y') {
+		viewer.hideToolbarItem(["pdf","doc","xls","ppt","hwp"]);
+	}else if('' == 'Y') {
+		viewer.hideToolbarItem(["doc","xls","ppt","hwp"]);
+	}	
+
+	// 암호화 설정 적용
+	viewer.setParameterEncrypt('11');
+	viewer.openFile('%a7%c0%0bo%f2+%b6%ed%f1%f3%f5%f7%08%f6%f4%f2%0e%a7%f2%3b%2a%26zld%94%ef%cbc%f6%06%a8c%82%c4%01%f9%28%90%f8YF%05e%83rn4%26%9dR%db%21%f1%cf%1c%aa%d6%14f%3c%0d%a9%60%1e%bb%aaw%8e%95%99%aa%27%3fc%db%5c%28%8b%fc%b4b%e9%9b%ab%06%ed%b6%26%0c2%1d%e9vP%9e%cdE%99%cd%ec%7b%93%5c%ea%27%1a%1a%edv%d8%0bu%9eK%c6%d1R2%d0V%2f%d9%2d%b7%db%22%11','%da%cb%b1%08%99%d7%16%d5%f1%f3%f5%f7%08%f6%f4%f2%b6%7b%8e%8f%8d%f7%ff%ac%fc%12%ea%9a%e1K%cd%b3%92%04%2f%0e%ff%2c%b1i%f8%058%a9%12%e8%f9%40%c2%e1J%afG%9b%e6%b7R%cf%c1%b8%be%f40%c2%3e%c2%ab%e5%b1%c9%8d%99%c4%e0s%2aX%10T%93%a96%e0%e5XGs%d6%e79%7bq%e9%b8%f3%80%e0%bb%a6%fe%9a%a8%26e%d6v%2f%0a%3f%91w%28');
+	
+	
+	
+	var agent = navigator.userAgent.toLowerCase();
+
+	if ( (navigator.appName == 'Netscape' && navigator.userAgent.search('Trident') != -1) || (agent.indexOf("msie") != -1) ) {
+
+	} else {
+		viewer.showToolbarItem(["print"]);
+	}
+};
+</script>
+<div id="crownix-viewer" style="position:absolute;width:100%;height:100%"></div></body>
+</html>
