@@ -28,4 +28,5 @@ def login():
     return render_template("login.html")
 
 
-app.run()
+if __name__ == "__main__":
+    app.run()
