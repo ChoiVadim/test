@@ -8,6 +8,10 @@ from fake_useragent import UserAgent
 
 ua = UserAgent()
 
+logging.basicConfig(
+    level=logging.INFO,
+)
+
 
 def encryptor(publicKey, phrase):
     # Get the directory of the current script

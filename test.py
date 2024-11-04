@@ -2,7 +2,6 @@ import os
 import time
 import json
 import logging
-import getpass
 
 import requests
 from fake_useragent import UserAgent
@@ -11,6 +10,13 @@ from src.login import login
 
 session = requests.Session()
 ua = UserAgent()
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    encoding="utf-8",
+    filename="main.log",
+)
 
 
 def make_request(url: str, cookies: dict) -> dict | None:
@@ -137,11 +143,5 @@ def get_test(username, password) -> None:
 
 
 if __name__ == "__main__":
-    logging.basicConfig(
-        level=logging.DEBUG,
-        format="%(asctime)s [%(levelname)s] %(message)s",
-        encoding="utf-8",
-        filename="main.log",
-    )
 
     get_test()
