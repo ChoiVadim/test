@@ -62,7 +62,23 @@ class KwangwoonUniversityApi:
         public_key_url = "https://klas.kw.ac.kr/usr/cmn/login/LoginSecurity.do"
         login_url = "https://klas.kw.ac.kr/usr/cmn/login/LoginConfirm.do"
 
-        self.session.get(login_form_url)
+        try:
+            with open(f"cookies/{login_id}_cookies.json", "r") as f:
+                self.cookies = json.load(f)
+
+                login_form_response = self.session.get(
+                    login_form_url, cookies=self.cookies
+                )
+
+                if login_form_response.url != login_form_url:
+                    logging.info(
+                        f"Log in with cookies. Status code: {login_form_response.status_code}"
+                    )
+                    return 1
+
+        except FileNotFoundError:
+            pass
+
         public_key_response = self.session.get(public_key_url)
 
         public_key_json = public_key_response.json()
@@ -99,13 +115,22 @@ class KwangwoonUniversityApi:
             response_data = login_response.json()
             if response_data.get("errorCount", 0) == 0:
                 logging.info("Login successful.")
+
                 self.cookies = {
                     cookie.name: cookie.value for cookie in self.session.cookies
                 }
 
+                # TODO: Save cookies to redis or database
+                os.makedirs("cookies", exist_ok=True)
+                with open(f"cookies/{login_id}_cookies.json", "w") as f:
+                    logging.debug("Login with cookies. Cookies saved to cookies.json")
+                    json.dump(self.cookies, f)
+
             else:
-                logging.error("Failed to parse response. Login failed.")
-                return "Wrong password or ID"
+                logging.error(
+                    "Failed to parse response. Login failed. Wrong password or ID"
+                )
+                return None
 
         else:
             logging.error("Failed to communicate with server.")
@@ -379,4 +404,5 @@ if __name__ == "__main__":
 
     student = KwangwoonUniversityApi()
     student.login("", "")
-    pprint(student.get_todo_list())
+
+    pprint(student.get_student_info())
