@@ -10,16 +10,14 @@ from fake_useragent import UserAgent
 
 class KwangwoonUniversityApi:
     def __init__(self) -> None:
-        self.ua = UserAgent()
-        self.session = requests.Session()
-        self.current_dir = os.path.dirname(os.path.abspath(__file__))
-
-        self.headers = {
+        self.ua: UserAgent = UserAgent()
+        self.session: requests.Session = requests.Session()
+        self.current_dir: str = os.path.dirname(os.path.abspath(__file__))
+        self.headers: dict = {
             "Content-Type": "application/json",
             "User-Agent": self.ua.random,
         }
-
-        self.cookies = {}
+        self.cookies: dict = {}
 
     def _cookies_is_valid(self) -> bool:
         if not self.cookies:
@@ -62,22 +60,13 @@ class KwangwoonUniversityApi:
         public_key_url = "https://klas.kw.ac.kr/usr/cmn/login/LoginSecurity.do"
         login_url = "https://klas.kw.ac.kr/usr/cmn/login/LoginConfirm.do"
 
-        try:
-            with open(f"cookies/{login_id}_cookies.json", "r") as f:
-                self.cookies = json.load(f)
+        login_form_response = self.session.get(login_form_url, cookies=self.cookies)
 
-                login_form_response = self.session.get(
-                    login_form_url, cookies=self.cookies
-                )
-
-                if login_form_response.url != login_form_url:
-                    logging.info(
-                        f"Log in with cookies. Status code: {login_form_response.status_code}"
-                    )
-                    return 1
-
-        except FileNotFoundError:
-            pass
+        if login_form_response.url != login_form_url:
+            logging.info(
+                f"Log in with cookies. Status code: {login_form_response.status_code}"
+            )
+            return 1
 
         public_key_response = self.session.get(public_key_url)
 
@@ -115,17 +104,17 @@ class KwangwoonUniversityApi:
             response_data = login_response.json()
             if response_data.get("errorCount", 0) == 0:
                 logging.info("Login successful.")
+                self.cookies = self.session.cookies.get_dict()
+                return self.cookies
 
-                self.cookies = {
-                    cookie.name: cookie.value for cookie in self.session.cookies
-                }
-
-                # TODO: Save cookies to redis or database
-                os.makedirs("cookies", exist_ok=True)
-                with open(f"cookies/{login_id}_cookies.json", "w") as f:
-                    logging.debug("Login with cookies. Cookies saved to cookies.json")
-                    json.dump(self.cookies, f)
-
+            elif (
+                response_data.get("fieldErrors")[0].get("message")
+                == "비밀번호 실패 5회 초과로 인하여 계정이 잠겼습니다.\n비밀번호 찾기를 이용해주세요."
+            ):
+                logging.error(
+                    "Login failed. Enter wrong password 5 times. Please reset password."
+                )
+                return None
             else:
                 logging.error(
                     "Failed to parse response. Login failed. Wrong password or ID"
@@ -312,6 +301,9 @@ class KwangwoonUniversityApi:
             logging.error(f"An error occurred while getting todo list: {e}")
 
     def _make_student_info_request(self, url: str) -> dict | None:
+        if not self._cookies_is_valid():
+            return None
+
         headers = {
             "Content-Type": "application/json",
             "User-Agent": self.ua.random,
@@ -403,6 +395,6 @@ if __name__ == "__main__":
     from pprint import pprint
 
     student = KwangwoonUniversityApi()
-    student.login("", "")
+    student.login("username", "password")
 
     pprint(student.get_student_info())

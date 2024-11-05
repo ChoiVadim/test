@@ -15,8 +15,8 @@
                 <span>Major Credits: {{ student_info.get('major_credits').get('total') }}/{{ student_info.get('major_credits').get('required') }} {{ '%.2f' % student_info.get('major_credits').get('ratio') }}%</span><br>
                 Elective Credits: {{ student_info.get('elective_credits').get('total') }}/{{ student_info.get('elective_credits').get('required') }}<br>
                 Average Score: {{ student_info.get('average_score') }}<br>
-                Credits for left semesters: {{ student_info.get('credits_for_left_semesters') }}<br>
-                Major Credits for left semesters: {{ student_info.get('major_credits_for_left_semesters') }}<br>
+                Credits for each semesters: {{ student_info.get('credits_for_each_semester') }}<br>
+                Major Credits for each semesters: {{ student_info.get('major_credits_for_each_semester') }}<br>
             </div>
           </div>
     </body> 
