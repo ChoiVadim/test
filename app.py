@@ -1,5 +1,5 @@
 import logging
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, session, redirect, url_for
 from src.kwuni import KwangwoonUniversityApi
 
 
@@ -16,12 +16,14 @@ app.secret_key = "your_secret_key_here"
 
 @app.route("/")
 def index():
-    return "Hello, world!"
+    if session["cookies"].get("SESSION", None):
+        kw = KwangwoonUniversityApi()
+        kw.set_cookies(session["cookies"])
+        student_info = kw.get_student_info()
+        if student_info:
+            return render_template("index.html", student_info=student_info)
 
-
-@app.route("/home")
-def home():
-    return render_template("index.html", student_info="")
+    return redirect(url_for("login"))
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -30,9 +32,6 @@ def login():
         username = request.form.get("username")
         password = request.form.get("password")
         kw = KwangwoonUniversityApi()
-
-        if session.get("cookies"):
-            kw.set_cookies(session["cookies"])
 
         kw.login(username, password)
         student_info = kw.get_student_info()
