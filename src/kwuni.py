@@ -6,6 +6,7 @@ import subprocess
 
 import requests
 from fake_useragent import UserAgent
+from bs4 import BeautifulSoup
 
 
 class KwangwoonUniversityApi:
@@ -389,12 +390,32 @@ class KwangwoonUniversityApi:
             "major_credits_for_each_semester": major_credits_for_each_semester,
         }
 
+    def get_student_photo_url(self) -> str | None:
+        if not self._cookies_is_valid():
+            return None
+        body = {
+            "selectedGrcode": "",
+            "selectedYearhakgi": "",
+            "selectedSubj": "",
+        }
+        response = self.session.post(
+            "https://klas.kw.ac.kr/std/sys/optrn/MyNumberQrStdPage.do",
+            cookies=self.cookies,
+            headers=self.headers,
+            json=body,
+        )
+
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.text, "html.parser")
+            img_tag = soup.select_one("#appModule > div:nth-child(2) > img")
+            return img_tag["src"]
+
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     from pprint import pprint
 
     student = KwangwoonUniversityApi()
-    student.login("username", "password")
+    student.login()
 
-    pprint(student.get_student_info())
+    pprint(student.get_student_photo_url())
