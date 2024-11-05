@@ -30,6 +30,20 @@ class KwangwoonUniversityApi:
     def set_cookies(self, cookies: dict):
         self.cookies = cookies
 
+    def login_with_cookies(self, cookies: dict):
+        self.set_cookies(cookies)
+
+        login_form_url = "https://klas.kw.ac.kr/usr/cmn/login/LoginForm.do"
+        login_form_response = self.session.get(login_form_url, cookies=self.cookies)
+
+        if login_form_response.url != login_form_url:
+            logging.info(
+                f"Log in with cookies. Status code: {login_form_response.status_code}"
+            )
+            return True
+
+        return False
+
     def _encryptor(self, publicKey: str, phrase: str) -> str | None:
         js_path = os.path.join(self.current_dir, "js", "jsencryptor.js")
 

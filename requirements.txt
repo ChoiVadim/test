@@ -1,5 +1,3 @@
 requests
 fake-useragent
-selenium
-python-dotenv
 beautifulsoup4

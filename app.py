@@ -15,17 +15,15 @@ app.secret_key = "your_secret_key_here"
 
 @app.route("/", methods=["GET"])
 def index():
-    if session["cookies"].get("SESSION", None):
-        kw = KwangwoonUniversityApi()
-        kw.set_cookies(session["cookies"])
+    kw = KwangwoonUniversityApi()
+    if kw.login_with_cookies(session.get("cookies")):
         student_info = kw.get_student_info()
         photo_url = kw.get_student_photo_url()
-        if student_info:
-            return render_template(
-                "index.html", student_info=student_info, photo_url=photo_url
-            )
+        return render_template(
+            "index.html", student_info=student_info, photo_url=photo_url
+        )
 
-    return redirect(url_for("login", error=""))
+    return render_template("login.html", error="")
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -48,7 +46,7 @@ def login():
         return render_template(
             "index.html", student_info=student_info, photo_url=photo_url
         )
-    return render_template("login.html")
+    return render_template("login.html", error="")
 
 
 if __name__ == "__main__":
