@@ -46,10 +46,12 @@ class KwangwoonUniversityApi:
 
     def _encryptor(self, publicKey: str, phrase: str) -> str | None:
         js_path = os.path.join(self.current_dir, "js", "jsencryptor.js")
+        # js_path = os.path.join(self.current_dir, "js", "jsencryptor.mjs")
 
         try:
             result = subprocess.run(
                 ["node", js_path, publicKey, phrase],
+                # ["/usr/bin/node", js_path, publicKey, phrase],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             )
