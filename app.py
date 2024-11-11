@@ -18,6 +18,9 @@ db_uri = "sqlite:///chat.db"
 app.config["SQLALCHEMY_DATABASE_URI"] = db_uri
 db.init_app(app)
 
+# Add this to your Flask app if you haven't already
+app.static_folder = 'static'
+
 
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)

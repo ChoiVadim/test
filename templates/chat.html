@@ -1,117 +1,35 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>KW Helper</title>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-body, h1,h2,h3,h4,h5,h6 {font-family: "Montserrat", sans-serif}
-.w3-row-padding img {margin-bottom: 12px}
-/* Set the width of the sidebar to 120px */
-.w3-sidebar {width: 120px;background: #222;}
-/* Add a left margin to the "page content" that matches the width of the sidebar (120px) */
-#main {margin-left: 120px}
-/* Remove margins from "page content" on small screens */
-@media only screen and (max-width: 600px) {
-  #main {
-    margin-left: 0;
-  }
-}
-</style>
-</head>
-<body class="w3-black">
+{% extends "base.html" %}
 
-<!-- Icon Bar (Sidebar - hidden on small screens) -->
-<nav class="w3-sidebar w3-bar-block w3-small w3-hide-small w3-center">
-  <!-- Avatar image in top left corner -->
-  <img src="{{ photo_url }}" style="width:100%">
-  
-  <a href="{{ url_for('index') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
-    <i class="fa fa-user w3-xxlarge"></i>
-    <p>ABOUT</p>
-  </a>
-  <a href="{{ url_for('todo') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
-    <i class="fa fa-tasks w3-xxlarge"></i>
-    <p>TODO</p>
-  </a>
-  <a href="{{ url_for('chat') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
-    <i class="fa fa-envelope w3-xxlarge"></i>
-    <p>CHAT</p>
-  </a>
-  <a href="{{ url_for('faq') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
-    <i class="fa fa-question-circle w3-xxlarge"></i>
-    <p>FAQ</p>
-  </a>
-  <a href="{{ url_for('logout') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-black" style="position: absolute; bottom: 0; width: 100%;">
-    <i class="fa fa-sign-out w3-xxlarge"></i>
-    <p>LOGOUT</p>
-  </a>
+{% block title %}KW Helper - Chat{% endblock %}
 
-  
-</nav>
+{% block header %}Chat{% endblock %}
 
-<!-- Navbar on small screens (Hidden on medium and large screens) -->
-<div class="w3-top w3-hide-large w3-hide-medium" id="myNavbar">
-  <div class="w3-bar w3-black w3-opacity w3-hover-opacity-off w3-center w3-small">
-    <a href="{{ url_for('index') }}" class="w3-bar-item w3-button" style="width:20% !important">ABOUT</a>
-    <a href="{{ url_for('todo') }}" class="w3-bar-item w3-button" style="width:20% !important">TODO</a>
-    <a href="{{ url_for('chat') }}" class="w3-bar-item w3-button" style="width:20% !important">CHAT</a>
-    <a href="{{ url_for('faq') }}" class="w3-bar-item w3-button" style="width:20% !important">FAQ</a>
-    <a href="{{ url_for('logout') }}" class="w3-bar-item w3-button" style="width:20% !important">LOGOUT</a>
-  </div>
-</div>
-
-<div class="w3-padding-large" id="main">
-  <!-- Header/Home -->
-  <header class="w3-container w3-padding-32 w3-center w3-black" id="home">
-    <h1 class="w3-jumbo">Chat</h1>
-  </header>
-  <!-- Chat Section -->
-  <div class="w3-content w3-justify w3-text-grey">
-
+{% block content %}
+<div class="w3-content w3-justify w3-text-grey">
     <div class="w3-container w3-theme-l1">
-      <div class="w3-row">
-        <div class="w3-col s12">
-          <div class="w3-card">
-            <div class="w3-container w3-content">
-              <div id="chatMessages" class="w3-ul w3-hoverable w3-white" style="height: 300px; overflow-y: scroll;">
-                {% for message in messages %}
-                <li class="w3-padding-medium w3-hover-light-grey">
-                  <span class="w3-small">Anonymous</span><br>
-                  <span class="w3-large">{{ message.content }}</span><br>
-                  <span style="font-size: x-small">{{ message.timestamp }}</span>
-                </li>
-                {% endfor %}
-              </div>
-              <form action="{{ url_for('chat') }}" method="POST">
-                <input class="w3-input w3-border" type="text" placeholder="Type your message here..." id="messageInput", name="message">
-                <button class="w3-button w3-light-grey w3-padding w3-right w3-margin-top" type="submit">
-                  <i class="fa fa-paper-plane"></i> SEND MESSAGE
-                </button>
-              </form>
+        <div class="w3-row">
+            <div class="w3-col s12">
+                <div class="w3-card">
+                    <div class="w3-container w3-content">
+                        <div id="chatMessages" class="w3-ul w3-hoverable w3-white" style="height: 300px; overflow-y: scroll;">
+                            {% for message in messages %}
+                            <li class="w3-padding-medium w3-hover-light-grey">
+                                <span class="w3-small">Anonymous</span><br>
+                                <span class="w3-large">{{ message.content }}</span><br>
+                                <span style="font-size: x-small">{{ message.timestamp }}</span>
+                            </li>
+                            {% endfor %}
+                        </div>
+                        <form action="{{ url_for('chat') }}" method="POST">
+                            <input class="w3-input w3-border" type="text" placeholder="Type your message here..." id="messageInput" name="message">
+                            <button class="w3-button w3-light-grey w3-padding w3-right w3-margin-top" type="submit">
+                                <i class="fa fa-paper-plane"></i> SEND MESSAGE
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
-
-
-  <!-- Footer -->
-  <footer class="w3-content w3-padding-64 w3-text-grey w3-xlarge">
-    <i class="fa fa-github w3-hover-opacity"></i>
-    <i class="fa fa-facebook-official w3-hover-opacity"></i>
-    <i class="fa fa-instagram w3-hover-opacity"></i>
-    <i class="fa fa-linkedin w3-hover-opacity"></i>
-    <p class="w3-medium">Made by <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" class="w3-hover-text-green">TEAM18</a></p>
-  <!-- End footer -->
-  </footer>
-
-<!-- END PAGE CONTENT -->
 </div>
-
-</body>
-</html>
+{% endblock %}

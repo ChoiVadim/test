@@ -1,204 +1,53 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>KW Helper</title>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Your Page Title</title>
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<!-- Include jQuery -->
+{% extends "base.html" %}
+
+{% block title %}KW Helper - FAQ{% endblock %}
+
+{% block extra_css %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-</head>
+{% endblock %}
 
-<style>
-body, h1,h2,h3,h4,h5,h6 {font-family: "Montserrat", sans-serif}
-.w3-row-padding img {margin-bottom: 12px}
-/* Set the width of the sidebar to 120px */
-.w3-sidebar {width: 120px;background: #222;}
-/* Add a left margin to the "page content" that matches the width of the sidebar (120px) */
-#main {margin-left: 120px}
-/* Remove margins from "page content" on small screens */
-@media only screen and (max-width: 600px) {
-  #main {
-    margin-left: 0;
-  }
-}
-</style>
+{% block header %}FAQ{% endblock %}
 
+{% block content %}
+<div class="w3-content w3-justify w3-text-grey">
+    <!-- FAQ Section -->
+    {% for question in [
+        {"title": "How do I apply for lectures, as 신입생 or 재학생?", "answer": "First year students apply as 신입생, others – 재학생."},
+        {"title": "Can you apply for part payment, what are the conditions?", "answer": "Part payment is available only when you have to pay more than 1 mil won, it's divided by 1 mil; e.g., Gotta pay 1.5 mil -> 1 part: 1 mil, 2 part: 500k."},
+        {"title": "How to pay 졸업준비금?", "answer": "Payment is made via online bank transfer."},
+        {"title": "When you apply for lectures, why are there already subjects saying 만석?", "answer": "Some subjects are meant for first-year students only, so you can apply for them only during 변경기간."},
+        {"title": "What papers do one require to get part-work permit?", "answer": "Check the immigration office website or Kwangwoon news feed for the required documents."},
+        {"title": "Many questions about lecture registration", "answer": "There is a PDF document available that addresses these questions."}
+    ] %}
+    <div class="w3-card-4 w3-margin-top">
+        <div class="w3-container w3-content">
+            <div class="w3-accordion w3-white">
+                <div onclick="toggleAnswer(this)" class="w3-padding w3-border-bottom w3-hover-shadow">
+                    <h6><b>{{ question.title }}</b><i class="fa fa-plus w3-right" style="cursor: pointer;"></i></h6>
+                    <p class="w3-container w3-hide">{{ question.answer }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function() {
     window.toggleAnswer = function(element) {
-      var answer = $(element).children("p");
-      answer.slideToggle();
-      var icon = $(element).find("i");
-      if (icon.hasClass("fa-plus")) {
-        icon.removeClass("fa-plus").addClass("fa-minus");
-        answer.removeClass("w3-hide");
-      } else {
-        icon.removeClass("fa-minus").addClass("fa-plus");
-        answer.addClass("w3-hide");
-      }
+        var answer = $(element).children("p");
+        answer.slideToggle();
+        var icon = $(element).find("i");
+        if (icon.hasClass("fa-plus")) {
+            icon.removeClass("fa-plus").addClass("fa-minus");
+            answer.removeClass("w3-hide");
+        } else {
+            icon.removeClass("fa-minus").addClass("fa-plus");
+            answer.addClass("w3-hide");
+        }
     }
-  });
+});
 </script>
-
-</head>
-<body class="w3-black">
-
-<!-- Icon Bar (Sidebar - hidden on small screens) -->
-<nav class="w3-sidebar w3-bar-block w3-small w3-hide-small w3-center">
-  <!-- Avatar image in top left corner -->
-  <img src="{{ photo_url }}" style="width:100%">
-  
-  <a href="{{ url_for('index') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
-    <i class="fa fa-user w3-xxlarge"></i>
-    <p>ABOUT</p>
-  </a>
-  <a href="{{ url_for('todo') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
-    <i class="fa fa-tasks w3-xxlarge"></i>
-    <p>TODO</p>
-  </a>
-  <a href="{{ url_for('chat') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
-    <i class="fa fa-envelope w3-xxlarge"></i>
-    <p>CHAT</p>
-  </a>
-  <a href="{{ url_for('faq') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
-    <i class="fa fa-question-circle w3-xxlarge"></i>
-    <p>FAQ</p>
-  </a>
-  <a href="{{ url_for('logout') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-black" style="position: absolute; bottom: 0; width: 100%;">
-    <i class="fa fa-sign-out w3-xxlarge"></i>
-    <p>LOGOUT</p>
-  </a>
-
-
-</nav>
-
-<!-- Navbar on small screens (Hidden on medium and large screens) -->
-<div class="w3-top w3-hide-large w3-hide-medium" id="myNavbar">
-  <div class="w3-bar w3-black w3-opacity w3-hover-opacity-off w3-center w3-small">
-    <a href="{{ url_for('index') }}" class="w3-bar-item w3-button" style="width:20% !important">ABOUT</a>
-    <a href="{{ url_for('todo') }}" class="w3-bar-item w3-button" style="width:20% !important">TODO</a>
-    <a href="{{ url_for('chat') }}" class="w3-bar-item w3-button" style="width:20% !important">CHAT</a>
-    <a href="{{ url_for('faq') }}" class="w3-bar-item w3-button" style="width:20% !important">FAQ</a>
-    <a href="{{ url_for('logout') }}" class="w3-bar-item w3-button" style="width:20% !important">LOGOUT</a>
-  </div>
-</div>
-
-<div class="w3-padding-large" id="main">
-  <!-- Header/Home -->
-  <header class="w3-container w3-padding-32 w3-center w3-black" id="home">
-    <h1 class="w3-jumbo">FAQ</h1>
-  </header>
-
-  <div class="w3-content w3-justify w3-text-grey">
-  <!-- FAQ Section -->
-      <!-- How do I apply for lectures, as 신입생 or 재학생? -->
-    <div class="w3-card-4 w3-margin-top">
-      <div class="w3-container w3-content">
-        <div class="w3-accordion w3-white">
-          <div onclick="toggleAnswer(this)" class="w3-padding w3-border-bottom w3-hover-shadow">
-            <h6><b>How do I apply for lectures, as 신입생 or 재학생?</b><i class="fa fa-plus w3-right" style="cursor: pointer;"></i></h6>
-            <p class="w3-container w3-hide">First year students apply as 신입생, others – 재학생.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Questions and Answers -->
-    <!-- How do I apply for lectures, as 신입생 or 재학생? -->
-    <div class="w3-card-4 w3-margin-top">
-      <div class="w3-container w3-content">
-        <div class="w3-accordion w3-white">
-          <div onclick="toggleAnswer(this)" class="w3-padding w3-border-bottom w3-hover-shadow">
-            <h6><b>How do I apply for lectures, as 신입생 or 재학생?</b><i class="fa fa-plus w3-right" style="cursor: pointer;"></i></h6>
-            <p class="w3-container w3-hide">First year students apply as 신입생, others – 재학생.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Can you apply for part payment, what are the conditions? -->
-    <div class="w3-card-4 w3-margin-top">
-      <div class="w3-container w3-content">
-        <div class="w3-accordion w3-white">
-          <div onclick="toggleAnswer(this)" class="w3-padding w3-border-bottom w3-hover-shadow">
-            <h6><b>Can you apply for part payment, what are the conditions?</b><i class="fa fa-plus w3-right" style="cursor: pointer;"></i></h6>
-            <p class="w3-container w3-hide">Part payment is available only when you have to pay more than 1 mil won, it’s divided by 1 mil; e.g., Gotta pay 1.5 mil -> 1 part: 1 mil, 2 part: 500k.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- How to pay 졸업준비금? -->
-    <div class="w3-card-4 w3-margin-top">
-      <div class="w3-container w3-content">
-        <div class="w3-accordion w3-white">
-          <div onclick="toggleAnswer(this)" class="w3-padding w3-border-bottom w3-hover-shadow">
-            <h6><b>How to pay 졸업준비금?</b><i class="fa fa-plus w3-right" style="cursor: pointer;"></i></h6>
-            <p class="w3-container w3-hide">Payment is made via online bank transfer.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- When you apply for lectures, why are there already subjects saying 만석? -->
-    <div class="w3-card-4 w3-margin-top">
-      <div class="w3-container w3-content">
-        <div class="w3-accordion w3-white">
-          <div onclick="toggleAnswer(this)" class="w3-padding w3-border-bottom w3-hover-shadow">
-            <h6><b>When you apply for lectures, why are there already subjects saying 만석?</b><i class="fa fa-plus w3-right" style="cursor: pointer;"></i></h6>
-            <p class="w3-container w3-hide">Some subjects are meant for first-year students only, so you can apply for them only during 변경기간.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- What papers do one require to get part-work permit? -->
-    <div class="w3-card-4 w3-margin-top">
-      <div class="w3-container w3-content">
-        <div class="w3-accordion w3-white">
-          <div onclick="toggleAnswer(this)" class="w3-padding w3-border-bottom w3-hover-shadow">
-            <h6><b>What papers do one require to get part-work permit?</b><i class="fa fa-plus w3-right" style="cursor: pointer;"></i></h6>
-            <p class="w3-container w3-hide">Check the immigration office website or Kwangwoon news feed for the required documents.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Many questions about lecture registration -->
-    <div class="w3-card-4 w3-margin-top">
-      <div class="w3-container w3-content">
-        <div class="w3-accordion w3-white">
-          <div onclick="toggleAnswer(this)" class="w3-padding w3-border-bottom w3-hover-shadow">
-            <h6><b>Many questions about lecture registration</b><i class="fa fa-plus w3-right" style="cursor: pointer;"></i></h6>
-            <p class="w3-container w3-hide">There is a PDF document available that addresses these questions.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
- 
-  
-  <!-- Footer -->
-  <footer class="w3-content w3-padding-64 w3-text-grey w3-xlarge">
-    <i class="fa fa-github w3-hover-opacity"></i>
-    <i class="fa fa-facebook-official w3-hover-opacity"></i>
-    <i class="fa fa-instagram w3-hover-opacity"></i>
-    <i class="fa fa-linkedin w3-hover-opacity"></i>
-    <p class="w3-medium">Made by <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" class="w3-hover-text-green">TEAM18</a></p>
-  <!-- End footer -->
-  </footer>
-
-<!-- END PAGE CONTENT -->
-</div>
-
-
-
-</body>
-
-</html>
+{% endblock %}
